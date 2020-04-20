@@ -45,8 +45,8 @@ services:
       - MONGO_USERNAME=$MONGO_USERNAME
       - MONGO_PASSWORD=$MONGO_PASSWORD
       - MONGO_HOSTNAME=library-database
-      - MONGO_PORT=$MONGO_PORT
-      - MONGO_DB=$MONGO_CUSOMTER_DB
+      - MONGO_PORT=$MONGO_Use Docker to Create a Node Development EnvironmentPORT
+      - MONGO_DB=$MONGO_CUSTOMER_DB
     command: ./scripts/wait-for.sh library-database:27017 -- /home/node/app/node_modules/.bin/nodemon server.js
     links:
       - library-database

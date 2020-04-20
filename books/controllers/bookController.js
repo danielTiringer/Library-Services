@@ -5,7 +5,7 @@ exports.getBooks = (_, res) => {
         .then(books => {
             res.status(200).json(books);
         })
-        .then(err => {
+        .catch(err => {
             if(err) {
                 throw err;
             }
@@ -39,7 +39,7 @@ exports.getBook = (req, res) => {
         .then(book => {
             res.status(200).json(book);
         })
-        .then(err => {
+        .catch(err => {
             if(err) {
                 throw err;
             }
@@ -51,7 +51,7 @@ exports.deleteBook = (req, res) => {
         .then(() => {
             res.status(200).send({ message: 'Book has been removed.' });
         })
-        .then(err => {
+        .catch(err => {
             if(err) {
                 throw err;
             }

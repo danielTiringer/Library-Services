@@ -1,59 +1,58 @@
 const Customer = require('../models/Customer');
 
-// exports.getBooks = (_, res) => {
-//     Book.find()
-//         .then(books => {
-//             res.status(200).json(books);
-//         })
-//         .then(err => {
-//             if(err) {
-//                 throw err;
-//             }
-//         })
-// }
+exports.getCustomers = (_, res) => {
+    Customer.find()
+        .then(customers => {
+            res.status(200).json(customers);
+        })
+        .catch(err => {
+            if(err) {
+                throw err;
+            }
+        })
+}
 
-// exports.addBook = (req, res) => {
-//     let newBook = {
-//         title: req.body.title,
-//         author: req.body.author,
-//         numberOfPages: req.body.numberOfPages,
-//         publisher: req.body.publisher,
-//     };
-//     console.log(newBook)
-//     let book = new Book(newBook);
+exports.addCustomer = (req, res) => {
+    let newCustomer = {
+        name: req.body.name,
+        age: req.body.age,
+        address: req.body.address
+    };
+    let customer = new Customer(newCustomer);
 
-//     book.save()
-//         .then(() => {
-//             console.log('Book saved to the database.');
-//         })
-//         .catch(err => {
-//             if(err) {
-//                 throw err;
-//             }
-//         })
-//     res.status(201).send({ message: 'Book saved to the database.' });
-// }
+    customer.save()
+        .then(() => {
+            console.log('Customer saved to the database.');
+        })
+        .catch(err => {
+            if(err) {
+                throw err;
+            }
+        })
+    res.status(201).send({ message: 'Customer saved to the database.' });
+}
 
-// exports.getBook = (req, res) => {
-//     Book.findById(req.params.id)
-//         .then(book => {
-//             res.status(200).json(book);
-//         })
-//         .then(err => {
-//             if(err) {
-//                 throw err;
-//             }
-//         })
-// }
+exports.getCustomer = (req, res) => {
+    Customer.findById(req.params.id)
+        .then(customer => {
+            if(customer._id) {
+                console.log(customer)
+                res.status(200).json(customer);
+            }
+        })
+        .catch(err => {
+            res.status(404).send({ message: err })
+        })
+}
 
-// exports.deleteBook = (req, res) => {
-//     Book.findOneAndRemove(req.params.id)
-//         .then(() => {
-//             res.status(200).send({ message: 'Book has been removed.' });
-//         })
-//         .then(err => {
-//             if(err) {
-//                 throw err;
-//             }
-//         })
-// }
+exports.deleteCustomer = (req, res) => {
+    Customer.findOneAndRemove(req.params.id)
+        .then(() => {
+            res.status(200).send({ message: 'Customer has been removed.' });
+        })
+        .catch(err => {
+            if(err) {
+                throw err;
+            }
+        })
+}

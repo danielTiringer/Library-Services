@@ -1,5 +1,4 @@
 const express = require('express');
-const Book = require('./models/Book');
 
 const app = express();
 
