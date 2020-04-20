@@ -1,0 +1,84 @@
+version: '3'
+
+services:
+  books-service:
+    container_name: Books-Service
+    build:
+      context: ./books
+      dockerfile: ../Docker/Node/Dockerfile
+      args:
+        NODE_VERSION: '12.16.2-alpine3.11'
+        ENV_PORT: 4545
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - MONGO_USERNAME=$MONGO_USERNAME
+      - MONGO_PASSWORD=$MONGO_PASSWORD
+      - MONGO_HOSTNAME=library-database
+      - MONGO_PORT=$MONGO_PORT
+      - MONGO_DB=$MONGO_BOOK_DB
+    command: ./scripts/wait-for.sh library-database:27017 -- /home/node/app/node_modules/.bin/nodemon server.js
+    links:
+      - library-database
+    depends_on:
+      - library-database
+    ports:
+      - 4545:4545
+    volumes:
+      - ./Scripts:/home/node/app/scripts
+      - ./books:/home/node/app
+      - ./books/node_modules:/home/node/app/node_modules
+    networks:
+      - node
+
+  customers-service:
+    container_name: Customers-Service
+    build:
+      context: ./customers
+      dockerfile: ../Docker/Node/Dockerfile
+      args:
+        NODE_VERSION: '12.16.2-alpine3.11'
+        ENV_PORT: 5555
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - MONGO_USERNAME=$MONGO_USERNAME
+      - MONGO_PASSWORD=$MONGO_PASSWORD
+      - MONGO_HOSTNAME=library-database
+      - MONGO_PORT=$MONGO_PORT
+      - MONGO_DB=$MONGO_CUSOMTER_DB
+    command: ./scripts/wait-for.sh library-database:27017 -- /home/node/app/node_modules/.bin/nodemon server.js
+    links:
+      - library-database
+    depends_on:
+      - library-database
+    ports:
+      - 5555:5555
+    volumes:
+      - ./Scripts:/home/node/app/scripts
+      - ./customers:/home/node/app
+      - ./customers/node_modules:/home/node/app/node_modules
+    networks:
+      - node
+
+  library-database:
+    container_name: Library-Database
+    image: mongo:4.1.8-xenial
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=$MONGO_USERNAME
+      - MONGO_INITDB_ROOT_PASSWORD=$MONGO_PASSWORD
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - 27017:27017
+    networks:
+      - node
+
+networks:
+  node:
+    driver: bridge
+
+volumes:
+  mongo-data:
