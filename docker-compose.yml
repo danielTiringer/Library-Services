@@ -45,7 +45,7 @@ services:
       - MONGO_USERNAME=$MONGO_USERNAME
       - MONGO_PASSWORD=$MONGO_PASSWORD
       - MONGO_HOSTNAME=library-database
-      - MONGO_PORT=$MONGO_Use Docker to Create a Node Development EnvironmentPORT
+      - MONGO_PORT=$MONGO_PORT
       - MONGO_DB=$MONGO_CUSTOMER_DB
     command: ./scripts/wait-for.sh library-database:27017 -- /home/node/app/node_modules/.bin/nodemon server.js
     links:
@@ -58,6 +58,36 @@ services:
       - ./Scripts:/home/node/app/scripts
       - ./customers:/home/node/app
       - ./customers/node_modules:/home/node/app/node_modules
+    networks:
+      - node
+
+  orders-service:
+    container_name: Orders-Service
+    build:
+      context: ./orders
+      dockerfile: ../Docker/Node/Dockerfile
+      args:
+        NODE_VERSION: '12.16.2-alpine3.11'
+        ENV_PORT: 7777
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - MONGO_USERNAME=$MONGO_USERNAME
+      - MONGO_PASSWORD=$MONGO_PASSWORD
+      - MONGO_HOSTNAME=library-database
+      - MONGO_PORT=$MONGO_PORT
+      - MONGO_DB=$MONGO_ORDER_DB
+    command: ./scripts/wait-for.sh library-database:27017 -- /home/node/app/node_modules/.bin/nodemon server.js
+    links:
+      - library-database
+    depends_on:
+      - library-database
+    ports:
+      - 7777:7777
+    volumes:
+      - ./Scripts:/home/node/app/scripts
+      - ./orders:/home/node/app
+      - ./orders/node_modules:/home/node/app/node_modules
     networks:
       - node
 
